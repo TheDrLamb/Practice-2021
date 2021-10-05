@@ -14,7 +14,8 @@ public class Interactable : MonoBehaviour
 public enum InteractableType
 {
     Holdable,
-    Fixed
+    Fixed,
+    Button
 }
 public enum InteractableSubtype
 {

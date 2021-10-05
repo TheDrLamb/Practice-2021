@@ -10,12 +10,12 @@ public class CharacterInteractController : MonoBehaviour
     public float interactionRange;
     public HoldState state = HoldState.Free;
 
-    public Interactable currentHold;
+    public Interactable currentInteract;
 
     GameObject currentTarget;
 
-    public float releaseTime = 1.5f;
-    float releaseTimer;
+    public float buttonHoldTime = 1.5f;
+    float buttonHoldTimer;
 
     CharacterShootingController shooting;
 
@@ -34,7 +34,7 @@ public class CharacterInteractController : MonoBehaviour
     private void FixedUpdate()
     {
         //[NOTE] -> if not grabbing something then smooth lerp the weight of the arms rig to 0
-        if (currentHold) HandVisualsUpdate();
+        if (currentInteract) HandVisualsUpdate();
     }
 
     private void CheckForInteractables() {
@@ -63,10 +63,14 @@ public class CharacterInteractController : MonoBehaviour
 
     private void HandVisualsUpdate()
     {
-        LeftHand.position = currentHold.Left.position;
-        LeftHand.rotation = currentHold.Left.rotation;
-        RightHand.position = currentHold.Right.position;
-        RightHand.rotation = currentHold.Right.rotation;
+        if (currentInteract.GetComponent<GrabbableInteractable>())
+        {
+            GrabbableInteractable currentGrab = currentInteract.GetComponent<GrabbableInteractable>();
+            LeftHand.position = currentGrab.Left.position;
+            LeftHand.rotation = currentGrab.Left.rotation;
+            RightHand.position = currentGrab.Right.position;
+            RightHand.rotation = currentGrab.Right.rotation;
+        }
     }
 
     private void InteractUIVisualUpdate() {
@@ -74,7 +78,8 @@ public class CharacterInteractController : MonoBehaviour
         //Debug.Log($"Press E to grab {currentTarget.name}");
     }
 
-    public void InteractDown() {
+    public void InteractDown()
+    {
         //Makes the determinations of what is being interacted with and calls the relevant functions
         if (currentTarget)
         {
@@ -85,39 +90,47 @@ public class CharacterInteractController : MonoBehaviour
                     //Fixed Code
                     break;
                 case InteractableType.Holdable:
-                    Grab(target);
+                    PickUp(target);
                     break;
+                case InteractableType.Button:
+                    target.Interact();
+                    break;
+
             }
         }
     }
 
     public void InteractHeld() {
         //Default Release condition -- If something is being interacted with already.
-        if (state != HoldState.Free)
+        buttonHoldTimer += Time.deltaTime;
+        if (buttonHoldTimer >= buttonHoldTime)
         {
-            releaseTimer += Time.deltaTime;
-            ReleaseVisualUpdate();
-            if (releaseTimer >= releaseTime) Release();
+            if (state != HoldState.Free)
+            {
+                ReleaseVisualUpdate();
+                Release();
+            }
         }
     }
 
     public void InteractUp()
     {
-        releaseTimer = 0;
+        buttonHoldTimer = 0;
     }
 
-    private void Grab(Interactable target){
+    private void PickUp(Interactable target){
         //Drop/Release the currently Held Item
-        if(currentHold != null)
+        if(currentInteract != null)
         {
             //Release currently held object
             Release();
         }
         //Check Interactable type
-        currentHold = target;
-        currentHold.Grab();
-        if (currentTarget.GetComponent<HoldableObject>())
+        currentInteract = target;
+        currentInteract.Interact();
+        if (target.GetComponent<HeldInteractable>())
         {
+            //[NOTE] - Gun Version here to be removed when combat systems are made
             if (currentTarget.GetComponent<GunInteractable>())
             {
                 //Set state Hold Gun
@@ -136,20 +149,21 @@ public class CharacterInteractController : MonoBehaviour
                 state = HoldState.Holding;
             }
             //Grab the new item
-            Vector3 offset = currentHold.GetComponent<HoldableObject>().offset;
+            HeldInteractable currentHold = currentInteract.GetComponent<HeldInteractable>();
+            Vector3 offset = currentInteract.GetComponent<HeldInteractable>().offset;
             StartCoroutine(SlerpHandTransforms(LeftHand, RightHand, currentHold.Left, currentHold.Right, 0.5f));
-            StartCoroutine(SlerpTransformLocal(currentHold.transform, HoldLocation, 0.75f, offset));
+            StartCoroutine(SlerpTransformLocal(currentInteract.transform, HoldLocation, 0.75f, offset));
         }
     }
 
     private void Release() {
         //Drop/Release the currently Held Item
-        currentHold.Drop();
+        currentInteract.Interact();
 
         //Add Random Force to the Dropped Item
         Vector3 dirR = this.transform.forward + (this.transform.right * Random.Range(-1.5f, 1.5f)) + (0.5f * this.transform.up);
-        currentHold.GetComponent<Rigidbody>().AddForce(dirR * 250, ForceMode.Acceleration);
-        currentHold.GetComponent<Rigidbody>().AddTorque(-dirR * 250, ForceMode.Acceleration);
+        currentInteract.GetComponent<Rigidbody>().AddForce(dirR * 250, ForceMode.Acceleration);
+        currentInteract.GetComponent<Rigidbody>().AddTorque(-dirR * 250, ForceMode.Acceleration);
 
         if (state == HoldState.HoldingGun)
         {
@@ -160,8 +174,8 @@ public class CharacterInteractController : MonoBehaviour
         }
 
         state = HoldState.Free;
-        currentHold = null;
-        releaseTimer = 0;
+        currentInteract = null;
+        buttonHoldTimer = 0;
     }
 
     private void ReleaseVisualUpdate()

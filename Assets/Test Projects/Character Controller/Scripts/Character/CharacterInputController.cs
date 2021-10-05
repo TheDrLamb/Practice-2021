@@ -26,7 +26,7 @@ public class CharacterInputController : MonoBehaviour
         animationController = GetComponent<CharacterAnimController>();
         interactController = GetComponent<CharacterInteractController>();
     }
-    private void Update()
+    private void FixedUpdate()
     {
         forwardRaw = Input.GetAxis("Vertical");
         rightRaw = Input.GetAxis("Horizontal");
