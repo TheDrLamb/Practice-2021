@@ -3,7 +3,7 @@ using System.Collections;
 
 public class GrabbableInteractable : Interactable
 {
-    bool held;
+    public bool held;
     public Transform Left, Right;
 
     public override void Interact() {

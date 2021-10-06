@@ -19,7 +19,5 @@ public enum InteractableType
 }
 public enum InteractableSubtype
 {
-    SingleAxis,
-    DoubleAxis,
-    UIInterface
+    Slider
 }

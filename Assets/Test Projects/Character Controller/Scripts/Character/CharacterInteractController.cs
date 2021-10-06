@@ -18,11 +18,13 @@ public class CharacterInteractController : MonoBehaviour
     float buttonHoldTimer;
 
     CharacterShootingController shooting;
+    CharacterInputController inputController;
 
 
     private void Start()
     {
         shooting = GetComponent<CharacterShootingController>();
+        inputController = GetComponent<CharacterInputController>();
     }
 
     private void Update()
@@ -35,6 +37,7 @@ public class CharacterInteractController : MonoBehaviour
     {
         //[NOTE] -> if not grabbing something then smooth lerp the weight of the arms rig to 0
         if (currentInteract) HandVisualsUpdate();
+        if (state == HoldState.FixedInteraction) currentInteract.GetComponent<FixedInteractable>().UpdateInput(inputController.GetInputRaw());
     }
 
     private void CheckForInteractables() {
@@ -87,10 +90,10 @@ public class CharacterInteractController : MonoBehaviour
             switch (target.type)
             {
                 case InteractableType.Fixed:
-                    //Fixed Code
+                    FixedInteraction(target);
                     break;
                 case InteractableType.Holdable:
-                    PickUp(target);
+                    HoldableInteraction(target);
                     break;
                 case InteractableType.Button:
                     target.Interact();
@@ -118,7 +121,7 @@ public class CharacterInteractController : MonoBehaviour
         buttonHoldTimer = 0;
     }
 
-    private void PickUp(Interactable target){
+    private void HoldableInteraction(Interactable target){
         //Drop/Release the currently Held Item
         if(currentInteract != null)
         {
@@ -156,21 +159,57 @@ public class CharacterInteractController : MonoBehaviour
         }
     }
 
+    private void FixedInteraction(Interactable target)
+    {
+        //Drop/Release the currently Held Item
+        if (currentInteract != null)
+        {
+            //Release currently held object
+            Release();
+        }
+        //Check Interactable type
+        currentInteract = target;
+        currentInteract.Interact();
+        if (target.GetComponent<FixedInteractable>())
+        {
+            Debug.Log("Fixed Interaction");
+            //Set state Hold
+            state = HoldState.FixedInteraction;
+            //Reverse grab onto the Interactable
+            FixedInteractable currentInt = currentInteract.GetComponent<FixedInteractable>();
+            StartCoroutine(SlerpHandTransforms(LeftHand, RightHand, currentInt.Left, currentInt.Right, 0.5f));
+            StartCoroutine(SlerpTransformLocal(this.transform, currentInt.playerPosition, 0.75f, Vector3.zero));
+            GetComponent<Rigidbody>().isKinematic = true;
+        }
+    }
+
     private void Release() {
         //Drop/Release the currently Held Item
         currentInteract.Interact();
 
-        //Add Random Force to the Dropped Item
-        Vector3 dirR = this.transform.forward + (this.transform.right * Random.Range(-1.5f, 1.5f)) + (0.5f * this.transform.up);
-        currentInteract.GetComponent<Rigidbody>().AddForce(dirR * 250, ForceMode.Acceleration);
-        currentInteract.GetComponent<Rigidbody>().AddTorque(-dirR * 250, ForceMode.Acceleration);
-
-        if (state == HoldState.HoldingGun)
+        //If held Item
+        if (currentInteract.GetComponent<HeldInteractable>())
         {
-            shooting.gunHeld = false;
-            shooting.damageAmount = 0;
-            shooting.rateOfFire = 0;
-            shooting.muzzleFlash = null;
+            //Add Random Force to the Dropped Item
+            Vector3 dirR = this.transform.forward + (this.transform.right * Random.Range(-1.5f, 1.5f)) + (0.5f * this.transform.up);
+            currentInteract.GetComponent<Rigidbody>().AddForce(dirR * 250, ForceMode.Acceleration);
+            currentInteract.GetComponent<Rigidbody>().AddTorque(-dirR * 250, ForceMode.Acceleration);
+
+            if (state == HoldState.HoldingGun)
+            {
+                shooting.gunHeld = false;
+                shooting.damageAmount = 0;
+                shooting.rateOfFire = 0;
+                shooting.muzzleFlash = null;
+            }
+        }
+
+        //If fixed
+        if (currentInteract.GetComponent<FixedInteractable>())
+        {
+            //Unparent the player
+            this.transform.parent = null;
+            GetComponent<Rigidbody>().isKinematic = false;
         }
 
         state = HoldState.Free;
@@ -225,6 +264,7 @@ public class CharacterInteractController : MonoBehaviour
 }
 public enum HoldState { 
     Holding,
+    FixedInteraction,
     HoldingGun,
     Free
 }
