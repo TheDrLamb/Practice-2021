@@ -17,6 +17,6 @@ public class InteractableSlider : FixedInteractable
     }
 
     public override void UpdateInput(Vector2 move) {
-        movementController.AdjustPosition(move);
+        movementController.SetPosition(move);
     }
 }

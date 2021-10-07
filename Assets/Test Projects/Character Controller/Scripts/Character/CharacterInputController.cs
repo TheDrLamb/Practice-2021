@@ -143,8 +143,7 @@ public class CharacterInputController : MonoBehaviour
 
     public Vector2 GetInputRaw()
     {
-        Debug.Log("RAW");
-        return new Vector2(forwardRaw, rightRaw);
+        return new Vector2(rightRaw, forwardRaw);
     }
 }
 public enum MovementLockStatus { 
