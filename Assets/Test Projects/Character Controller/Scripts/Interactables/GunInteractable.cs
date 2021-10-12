@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class GunInteractable : HeldInteractable
+public class GunInteractable : ChildInteractable
 {
     //[NOTE] -> Will be obsolete when guns are added to the inventory system.
     //Gun Statistics

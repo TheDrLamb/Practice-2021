@@ -8,7 +8,7 @@ public class CharacterInteractController : MonoBehaviour
     public Transform LeftHand, RightHand;
     public LayerMask interactableLayer;
     public float interactionRange;
-    public HoldState state = HoldState.Free;
+    public InteractionState state = InteractionState.Free;
 
     public Interactable currentInteract;
 
@@ -37,7 +37,7 @@ public class CharacterInteractController : MonoBehaviour
     {
         //[NOTE] -> if not grabbing something then smooth lerp the weight of the arms rig to 0
         if (currentInteract) HandVisualsUpdate();
-        if (state == HoldState.FixedInteraction) currentInteract.GetComponent<FixedInteractable>().UpdateInput(inputController.GetInputRaw());
+        if (state == InteractionState.ParentInteraction) currentInteract.GetComponent<ParentInteractable>().UpdateInput(inputController.GetInputRaw());
     }
 
     private void CheckForInteractables() {
@@ -87,15 +87,16 @@ public class CharacterInteractController : MonoBehaviour
         if (currentTarget)
         {
             Interactable target = currentTarget.GetComponent<Interactable>();
+            if(!target) target = currentTarget.GetComponentInParent<Interactable>();
             switch (target.type)
             {
-                case InteractableType.Fixed:
+                case InteractableType.Parent:
                     FixedInteraction(target);
                     break;
-                case InteractableType.Holdable:
+                case InteractableType.Child:
                     HoldableInteraction(target);
                     break;
-                case InteractableType.Button:
+                case InteractableType.Static:
                     target.Interact();
                     break;
 
@@ -105,13 +106,16 @@ public class CharacterInteractController : MonoBehaviour
 
     public void InteractHeld() {
         //Default Release condition -- If something is being interacted with already.
-        buttonHoldTimer += Time.deltaTime;
-        if (buttonHoldTimer >= buttonHoldTime)
+        if (currentInteract != null)
         {
-            if (state != HoldState.Free)
+            buttonHoldTimer += Time.deltaTime;
+            if (buttonHoldTimer >= buttonHoldTime)
             {
-                ReleaseVisualUpdate();
-                Release();
+                if (state != InteractionState.Free)
+                {
+                    ReleaseVisualUpdate();
+                    Release();
+                }
             }
         }
     }
@@ -131,13 +135,13 @@ public class CharacterInteractController : MonoBehaviour
         //Check Interactable type
         currentInteract = target;
         currentInteract.Interact();
-        if (target.GetComponent<HeldInteractable>())
+        if (target.GetComponent<ChildInteractable>())
         {
             //[NOTE] - Gun Version here to be removed when combat systems are made
             if (currentTarget.GetComponent<GunInteractable>())
             {
                 //Set state Hold Gun
-                state = HoldState.HoldingGun;
+                state = InteractionState.HoldingGun;
                 //Trigger Gun Specific Code
                 GunInteractable gun = currentTarget.GetComponent<GunInteractable>();
                 shooting.gunHeld = true;
@@ -149,11 +153,11 @@ public class CharacterInteractController : MonoBehaviour
             else 
             {
                 //Set state Hold
-                state = HoldState.Holding;
+                state = InteractionState.ChildInteraction;
             }
             //Grab the new item
-            HeldInteractable currentHold = currentInteract.GetComponent<HeldInteractable>();
-            Vector3 offset = currentInteract.GetComponent<HeldInteractable>().offset;
+            ChildInteractable currentHold = currentInteract.GetComponent<ChildInteractable>();
+            Vector3 offset = currentInteract.GetComponent<ChildInteractable>().offset;
             StartCoroutine(SlerpHandTransforms(LeftHand, RightHand, currentHold.Left, currentHold.Right, 0.5f));
             StartCoroutine(SlerpTransformLocal(currentInteract.transform, HoldLocation, 0.75f, offset));
         }
@@ -170,13 +174,13 @@ public class CharacterInteractController : MonoBehaviour
         //Check Interactable type
         currentInteract = target;
         currentInteract.Interact();
-        if (target.GetComponent<FixedInteractable>())
+        if (target.GetComponent<ParentInteractable>())
         {
             Debug.Log("Fixed Interaction");
             //Set state Hold
-            state = HoldState.FixedInteraction;
+            state = InteractionState.ParentInteraction;
             //Reverse grab onto the Interactable
-            FixedInteractable currentInt = currentInteract.GetComponent<FixedInteractable>();
+            ParentInteractable currentInt = currentInteract.GetComponent<ParentInteractable>();
             StartCoroutine(SlerpHandTransforms(LeftHand, RightHand, currentInt.Left, currentInt.Right, 0.5f));
             StartCoroutine(SlerpTransformLocal(this.transform, currentInt.playerPosition, 0.75f, Vector3.zero));
             GetComponent<Rigidbody>().isKinematic = true;
@@ -186,16 +190,15 @@ public class CharacterInteractController : MonoBehaviour
     private void Release() {
         //Drop/Release the currently Held Item
         currentInteract.Interact();
-
         //If held Item
-        if (currentInteract.GetComponent<HeldInteractable>())
+        if (currentInteract.GetComponent<ChildInteractable>())
         {
             //Add Random Force to the Dropped Item
             Vector3 dirR = this.transform.forward + (this.transform.right * Random.Range(-1.5f, 1.5f)) + (0.5f * this.transform.up);
             currentInteract.GetComponent<Rigidbody>().AddForce(dirR * 250, ForceMode.Acceleration);
             currentInteract.GetComponent<Rigidbody>().AddTorque(-dirR * 250, ForceMode.Acceleration);
 
-            if (state == HoldState.HoldingGun)
+            if (state == InteractionState.HoldingGun)
             {
                 shooting.gunHeld = false;
                 shooting.damageAmount = 0;
@@ -205,16 +208,15 @@ public class CharacterInteractController : MonoBehaviour
         }
 
         //If fixed
-        if (currentInteract.GetComponent<FixedInteractable>())
+        if (currentInteract.GetComponent<ParentInteractable>())
         {
             //Unparent the player
             this.transform.parent = null;
             GetComponent<Rigidbody>().isKinematic = false;
         }
 
-        state = HoldState.Free;
+        state = InteractionState.Free;
         currentInteract = null;
-        buttonHoldTimer = 0;
     }
 
     private void ReleaseVisualUpdate()
@@ -262,9 +264,9 @@ public class CharacterInteractController : MonoBehaviour
     }
 
 }
-public enum HoldState { 
-    Holding,
-    FixedInteraction,
+public enum InteractionState { 
+    ChildInteraction,
+    ParentInteraction,
     HoldingGun,
     Free
 }

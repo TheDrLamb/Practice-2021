@@ -13,11 +13,13 @@ public class Interactable : MonoBehaviour
 
 public enum InteractableType
 {
-    Holdable,
-    Fixed,
-    Button
+    Child,
+    Parent,
+    Static,
+    Physics
 }
 public enum InteractableSubtype
 {
-    Slider
+    Slider,
+    Button
 }

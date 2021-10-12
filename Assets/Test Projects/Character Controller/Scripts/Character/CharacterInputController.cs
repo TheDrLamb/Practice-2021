@@ -26,7 +26,7 @@ public class CharacterInputController : MonoBehaviour
         animationController = GetComponent<CharacterAnimController>();
         interactController = GetComponent<CharacterInteractController>();
     }
-    private void FixedUpdate()
+    private void Update()
     {
         forwardRaw = Input.GetAxis("Vertical");
         rightRaw = Input.GetAxis("Horizontal");
@@ -52,6 +52,11 @@ public class CharacterInputController : MonoBehaviour
             triggerUp = true;
         }
 
+        if (Input.GetKeyUp(InteractKey))
+        {
+            interactController.InteractUp();
+        }
+
         if (Input.GetKeyDown(InteractKey))
         {
             interactController.InteractDown();
@@ -60,11 +65,6 @@ public class CharacterInputController : MonoBehaviour
         if (Input.GetKey(InteractKey))
         {
             interactController.InteractHeld();
-        }
-
-        if (Input.GetKeyUp(InteractKey))
-        {
-            interactController.InteractUp();
         }
     }
 

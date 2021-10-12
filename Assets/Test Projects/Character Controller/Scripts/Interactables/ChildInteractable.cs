@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HeldInteractable : GrabbableInteractable
+public class ChildInteractable : GrabbableInteractable
 {
     public Vector3 offset;
 
