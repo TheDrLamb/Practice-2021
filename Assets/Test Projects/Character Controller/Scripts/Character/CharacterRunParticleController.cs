@@ -4,22 +4,22 @@ using UnityEngine;
 
 public class CharacterRunParticleController : MonoBehaviour
 {
-    CharacterInputController inputController;
     public ParticleSystem runDustParticles;
-
-    private void Start()
-    {
-        inputController = GetComponent<CharacterInputController>();
-    }
+    bool isMoving;
 
     private void Update()
     {
-        if (inputController.IsMoving())
+        if (isMoving)
         {
             runDustParticles.Play(true);
         }
         else {
             runDustParticles.Stop(true, ParticleSystemStopBehavior.StopEmitting);
         }
+    }
+
+    public void SetIsMoving(bool _isMoving) 
+    {
+        isMoving = _isMoving;
     }
 }

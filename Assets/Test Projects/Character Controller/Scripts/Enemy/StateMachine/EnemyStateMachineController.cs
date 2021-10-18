@@ -43,6 +43,11 @@ public class EnemyStateMachineController : MonoBehaviour
         }
     }
 
+    private void FixedUpdate()
+    {
+        currentState.FixedUpdate();
+    }
+
     public void Initialize(EnemyBehaviorState startingState)
     {
         currentState = startingState;

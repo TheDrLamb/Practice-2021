@@ -8,7 +8,6 @@ public class CharacterInteractController : MonoBehaviour
     public Transform LeftHand, RightHand;
     public LayerMask interactableLayer;
     public float interactionRange;
-    public InteractionState state = InteractionState.Free;
 
     public Interactable currentInteract;
 
@@ -37,7 +36,7 @@ public class CharacterInteractController : MonoBehaviour
     {
         //[NOTE] -> if not grabbing something then smooth lerp the weight of the arms rig to 0
         if (currentInteract) HandVisualsUpdate();
-        if (state == InteractionState.ParentInteraction) currentInteract.GetComponent<ParentInteractable>().UpdateInput(inputController.GetInputRaw());
+        //if (inputController.state = PlayerState.ParentInteraction) currentInteract.GetComponent<ParentInteractable>().UpdateInput(inputController.GetInputRaw());
     }
 
     private void CheckForInteractables() {
@@ -111,11 +110,13 @@ public class CharacterInteractController : MonoBehaviour
             buttonHoldTimer += Time.deltaTime;
             if (buttonHoldTimer >= buttonHoldTime)
             {
-                if (state != InteractionState.Free)
+                /*
+                if (inputController.state = PlayerState.ChildInteraction || inputController.state == PlayerState.ParentInteraction)
                 {
                     ReleaseVisualUpdate();
                     Release();
                 }
+                */
             }
         }
     }
@@ -137,7 +138,7 @@ public class CharacterInteractController : MonoBehaviour
         currentInteract.Interact();
         if (target.GetComponent<ChildInteractable>())
         {
-            state = InteractionState.ChildInteraction;
+            //inputController.state  PlayerState.ChildInteraction;
             //Grab the new item
             ChildInteractable currentHold = currentInteract.GetComponent<ChildInteractable>();
             Vector3 offset = currentInteract.GetComponent<ChildInteractable>().offset;
@@ -164,7 +165,7 @@ public class CharacterInteractController : MonoBehaviour
         {
             Debug.Log("Fixed Interaction");
             //Set state Hold
-            state = InteractionState.ParentInteraction;
+            //state = InteractionState.ParentInteraction;
             //Reverse grab onto the Interactable
             ParentInteractable currentInt = currentInteract.GetComponent<ParentInteractable>();
             GetComponent<Rigidbody>().isKinematic = true;
@@ -196,7 +197,8 @@ public class CharacterInteractController : MonoBehaviour
             GetComponent<Rigidbody>().isKinematic = false;
         }
 
-        state = InteractionState.Free;
+        //inputController.state  PlayerState.HoldingGun;
+        //[NOTE] -> Tell Input contr
         currentInteract = null;
     }
 
@@ -244,9 +246,4 @@ public class CharacterInteractController : MonoBehaviour
         RightHand.position = rightEnd;
     }
 
-}
-public enum InteractionState { 
-    ChildInteraction,
-    ParentInteraction,
-    Free
 }

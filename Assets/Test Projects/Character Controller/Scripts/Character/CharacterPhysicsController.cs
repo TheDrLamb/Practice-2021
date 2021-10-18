@@ -9,9 +9,7 @@ public class CharacterPhysicsController : MonoBehaviour
     public float acceleration = 100;
     public float maxAcceleration = 200;
     public float maxSpeed = 10;
-    float currentSpeed;
     public float rotationSpeed = 5;
-    float currentRotSpeed;
     public float brakingForce = 5;
 
     public float rideHeight = 1.25f;
@@ -23,6 +21,7 @@ public class CharacterPhysicsController : MonoBehaviour
     public float uprightSpringDamping = 5f;
 
     public LayerMask mapLayer;
+    public float inputDeadzone = 0.1f;
 
     Quaternion lastPlayerTargetRotation;
     Quaternion playerTargetRotation;
@@ -31,72 +30,53 @@ public class CharacterPhysicsController : MonoBehaviour
     Vector3 old_GoalVelocity;
     Vector3 old_Move;
 
-    CharacterInputController inputController;
-    CharacterCombatController shootingController;
-
     private void Start()
     {
         rigid = GetComponent<Rigidbody>();
         old_Move = Vector3.zero;
         old_GoalVelocity = Vector3.zero;
         playerTargetRotation = lastPlayerTargetRotation = rigid.transform.rotation;
-
-        inputController = GetComponent<CharacterInputController>();
-        shootingController = GetComponent<CharacterCombatController>();
     }
     private void FixedUpdate()
     {
-        UpdateMovementSpeed();
-        UpdateMovementForces();
-        UpdateLookDirection();
         UpdateRideHeight();
         UpdateUprightForce();
     }
 
-    void UpdateMovementSpeed() {
-        currentSpeed = maxSpeed;
-        currentRotSpeed = rotationSpeed;
+    public void SetMovementDirection(Vector3 move)
+    {
+        if (move.magnitude > 1f)
+            move.Normalize();
+
+        old_Move = move;
+
+        Vector3 unitVelocity = old_GoalVelocity.normalized;
+
+        float velDot = Vector3.Dot(old_Move, unitVelocity);
+
+        float accel = acceleration * AccelerationFromDot(velDot);
+
+        Vector3 goalVelocity = move * maxSpeed;
+
+        old_GoalVelocity = Vector3.MoveTowards(old_GoalVelocity, goalVelocity + groundVelocity, accel * Time.fixedDeltaTime);
+
+        Vector3 neededAccel = (old_GoalVelocity - rigid.velocity) / Time.fixedDeltaTime;
+
+        neededAccel = Vector3.ClampMagnitude(neededAccel, maxAcceleration * AccelerationFromDot(velDot));
+        neededAccel.y = 0;
+
+        rigid.AddForce((neededAccel * rigid.mass) + Physics.gravity);
+        //playerTargetRotation = Quaternion.LookRotation(old_Move, Vector3.up); // Have player look in direction of movement
     }
 
-    void UpdateMovementForces()
-    {
-        Vector3 move = inputController.GetMoveDir();
-        if (inputController.IsMoving())
-        {
-            if (move.magnitude > 1f)
-                move.Normalize();
-
-            old_Move = move;
-
-            Vector3 unitVelocity = old_GoalVelocity.normalized;
-
-            float velDot = Vector3.Dot(old_Move, unitVelocity);
-
-            float accel = acceleration * AccelerationFromDot(velDot);
-
-            Vector3 goalVelocity = move * currentSpeed;
-
-            old_GoalVelocity = Vector3.MoveTowards(old_GoalVelocity, goalVelocity + groundVelocity, accel * Time.fixedDeltaTime);
-
-            Vector3 neededAccel = (old_GoalVelocity - rigid.velocity) / Time.fixedDeltaTime;
-
-            neededAccel = Vector3.ClampMagnitude(neededAccel, maxAcceleration * AccelerationFromDot(velDot));
-            neededAccel.y = 0;
-
-            rigid.AddForce((neededAccel * rigid.mass) + Physics.gravity);
-            //playerTargetRotation = Quaternion.LookRotation(old_Move, Vector3.up); // Have player look in direction of movement
-        }
-        else 
-        {
-            //Braking Force
-            rigid.velocity = new Vector3(rigid.velocity.x * (1 / brakingForce), rigid.velocity.y, rigid.velocity.z * (1 / brakingForce));
-        }
+    public void ApplyBreakingForce() {
+        //Braking Force
+        rigid.velocity = new Vector3(rigid.velocity.x * (1 / brakingForce), rigid.velocity.y, rigid.velocity.z * (1 / brakingForce));
     }
 
-    private void UpdateLookDirection()
+    public void SetLookDirection(Quaternion targetRotation)
     {
-        Quaternion targetRotation = inputController.GetLookDirection();
-        playerTargetRotation = Quaternion.Slerp(lastPlayerTargetRotation, targetRotation, Time.fixedDeltaTime * currentRotSpeed);
+        playerTargetRotation = Quaternion.Slerp(lastPlayerTargetRotation, targetRotation, Time.fixedDeltaTime * rotationSpeed);
         lastPlayerTargetRotation = playerTargetRotation;
     }
 
