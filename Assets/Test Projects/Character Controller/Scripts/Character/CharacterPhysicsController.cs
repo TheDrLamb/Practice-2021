@@ -32,7 +32,7 @@ public class CharacterPhysicsController : MonoBehaviour
     Vector3 old_Move;
 
     CharacterInputController inputController;
-    CharacterShootingController shootingController;
+    CharacterCombatController shootingController;
 
     private void Start()
     {
@@ -42,7 +42,7 @@ public class CharacterPhysicsController : MonoBehaviour
         playerTargetRotation = lastPlayerTargetRotation = rigid.transform.rotation;
 
         inputController = GetComponent<CharacterInputController>();
-        shootingController = GetComponent<CharacterShootingController>();
+        shootingController = GetComponent<CharacterCombatController>();
     }
     private void FixedUpdate()
     {
@@ -56,11 +56,6 @@ public class CharacterPhysicsController : MonoBehaviour
     void UpdateMovementSpeed() {
         currentSpeed = maxSpeed;
         currentRotSpeed = rotationSpeed;
-        if (shootingController.shooting) {
-            //[NOTE] -> Make the factor by which the character slows variable.
-            currentSpeed = maxSpeed / 2;
-            currentRotSpeed = rotationSpeed / 2;
-        }
     }
 
     void UpdateMovementForces()

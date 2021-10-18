@@ -17,13 +17,13 @@ public class CharacterInteractController : MonoBehaviour
     public float buttonHoldTime = 1.5f;
     float buttonHoldTimer;
 
-    CharacterShootingController shooting;
+    CharacterCombatController shooting;
     CharacterInputController inputController;
 
 
     private void Start()
     {
-        shooting = GetComponent<CharacterShootingController>();
+        shooting = GetComponent<CharacterCombatController>();
         inputController = GetComponent<CharacterInputController>();
     }
 
