@@ -137,28 +137,14 @@ public class CharacterInteractController : MonoBehaviour
         currentInteract.Interact();
         if (target.GetComponent<ChildInteractable>())
         {
-            //[NOTE] - Gun Version here to be removed when combat systems are made
-            if (currentTarget.GetComponent<GunInteractable>())
-            {
-                //Set state Hold Gun
-                state = InteractionState.HoldingGun;
-                //Trigger Gun Specific Code
-                GunInteractable gun = currentTarget.GetComponent<GunInteractable>();
-                shooting.gunHeld = true;
-                shooting.damageAmount = gun.damageAmount;
-                shooting.rateOfFire = gun.rateOfFire;
-                shooting.fireMode = gun.fireMode;
-                shooting.muzzleFlash = gun.muzzleFlash;
-            }
-            else 
-            {
-                //Set state Hold
-                state = InteractionState.ChildInteraction;
-            }
+            state = InteractionState.ChildInteraction;
             //Grab the new item
             ChildInteractable currentHold = currentInteract.GetComponent<ChildInteractable>();
             Vector3 offset = currentInteract.GetComponent<ChildInteractable>().offset;
-            StartCoroutine(SlerpHandTransforms(LeftHand, RightHand, currentHold.Left, currentHold.Right, 0.5f));
+
+            //[NOTE] -> Commented out hand lerp for hard prototyping
+            //StartCoroutine(SlerpHandTransforms(LeftHand, RightHand, currentHold.Left, currentHold.Right, 0.5f));
+            
             StartCoroutine(SlerpTransformLocal(currentInteract.transform, HoldLocation, 0.75f, offset));
         }
     }
@@ -181,9 +167,12 @@ public class CharacterInteractController : MonoBehaviour
             state = InteractionState.ParentInteraction;
             //Reverse grab onto the Interactable
             ParentInteractable currentInt = currentInteract.GetComponent<ParentInteractable>();
-            StartCoroutine(SlerpHandTransforms(LeftHand, RightHand, currentInt.Left, currentInt.Right, 0.5f));
-            StartCoroutine(SlerpTransformLocal(this.transform, currentInt.playerPosition, 0.75f, Vector3.zero));
             GetComponent<Rigidbody>().isKinematic = true;
+
+            //[NOTE] -> Commented out hand lerp for hard prototyping
+            //StartCoroutine(SlerpHandTransforms(LeftHand, RightHand, currentInt.Left, currentInt.Right, 0.5f));
+            
+            StartCoroutine(SlerpTransformLocal(this.transform, currentInt.playerPosition, 0.75f, Vector3.zero));
         }
     }
 
@@ -197,14 +186,6 @@ public class CharacterInteractController : MonoBehaviour
             Vector3 dirR = this.transform.forward + (this.transform.right * Random.Range(-1.5f, 1.5f)) + (0.5f * this.transform.up);
             currentInteract.GetComponent<Rigidbody>().AddForce(dirR * 250, ForceMode.Acceleration);
             currentInteract.GetComponent<Rigidbody>().AddTorque(-dirR * 250, ForceMode.Acceleration);
-
-            if (state == InteractionState.HoldingGun)
-            {
-                shooting.gunHeld = false;
-                shooting.damageAmount = 0;
-                shooting.rateOfFire = 0;
-                shooting.muzzleFlash = null;
-            }
         }
 
         //If fixed
@@ -267,6 +248,5 @@ public class CharacterInteractController : MonoBehaviour
 public enum InteractionState { 
     ChildInteraction,
     ParentInteraction,
-    HoldingGun,
     Free
 }

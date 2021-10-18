@@ -13,50 +13,6 @@ public class CharacterShootingController : MonoBehaviour
     public bool gunHeld = false;
 
 
-    CharacterInputController inputController;
-
-    private void Start()
-    {
-        inputController = GetComponent<CharacterInputController>();
-    }
-
-    private void Update()
-    {
-        //[NOTE] -> Change this to make the Trigger Down and Up events call a function on the controller, rather than constantly checking for them
-        if (gunHeld)
-        {
-            if (inputController.GetTriggerDown())
-            {
-                switch (fireMode)
-                {
-                    case FireModes.Single:
-                        Fire();
-                        break;
-                    case FireModes.Auto:
-                        StartCoroutine(AutoFire());
-                        break;
-                }
-            }
-
-            if (inputController.GetTriggerUp())
-            {
-                shooting = false;
-                StopAllCoroutines();
-            }
-
-            if (shooting && fireMode == FireModes.Single)
-            {
-                shooting = false;
-            }
-        }
-    }
-
-    private IEnumerator AutoFire() 
-    {
-        Fire();
-        yield return new WaitForSeconds(1 / rateOfFire);
-        if (!inputController.GetTriggerUp()) StartCoroutine(AutoFire());
-    }
     private void Fire() {
         shooting = true;
         //Play the muzzle flash particle system
