@@ -5,7 +5,6 @@ using UnityEngine;
 public class CharacterInteractController : MonoBehaviour
 {
     public Transform HoldLocation;
-    public Transform LeftHand, RightHand;
     public LayerMask interactableLayer;
     public float interactionRange;
 
@@ -17,23 +16,18 @@ public class CharacterInteractController : MonoBehaviour
     float buttonHoldTimer;
 
     CharacterStateMachineController stateMachine;
+    CharacterAnimationController animationController;
 
     private void Start()
     {
         stateMachine = GetComponent<CharacterStateMachineController>();
+        animationController = GetComponent<CharacterAnimationController>();
     }
 
     private void Update()
     {
         CheckForInteractables();
         InteractUIVisualUpdate();
-    }
-
-    private void FixedUpdate()
-    {
-        //[NOTE] -> if not grabbing something then smooth lerp the weight of the arms rig to 0
-        if (currentInteract) HandVisualsUpdate();
-        //if (inputController.state = PlayerState.ParentInteraction) currentInteract.GetComponent<ParentInteractable>().UpdateInput(inputController.GetInputRaw());
     }
 
     private void CheckForInteractables() {
@@ -56,18 +50,6 @@ public class CharacterInteractController : MonoBehaviour
         else 
         {
             currentTarget = null;
-        }
-    }
-
-    private void HandVisualsUpdate()
-    {
-        if (currentInteract.GetComponent<GrabbableInteractable>())
-        {
-            GrabbableInteractable currentGrab = currentInteract.GetComponent<GrabbableInteractable>();
-            LeftHand.position = currentGrab.Left.position;
-            LeftHand.rotation = currentGrab.Left.rotation;
-            RightHand.position = currentGrab.Right.position;
-            RightHand.rotation = currentGrab.Right.rotation;
         }
     }
 
@@ -141,9 +123,9 @@ public class CharacterInteractController : MonoBehaviour
             ChildInteractable currentHold = currentInteract.GetComponent<ChildInteractable>();
             Vector3 offset = currentInteract.GetComponent<ChildInteractable>().offset;
 
-            //[NOTE] -> Commented out hand lerp for hard prototyping
-            //StartCoroutine(SlerpHandTransforms(LeftHand, RightHand, currentHold.Left, currentHold.Right, 0.5f));
-            
+            //Set Hand positions
+            animationController.SetHandTransforms(currentHold.Left, currentHold.Right);
+            //Set holdable position
             StartCoroutine(SlerpTransformLocal(currentInteract.transform, HoldLocation, 0.75f, offset));
         }
     }
@@ -171,9 +153,9 @@ public class CharacterInteractController : MonoBehaviour
             ParentInteractable currentInt = currentInteract.GetComponent<ParentInteractable>();
             GetComponent<Rigidbody>().isKinematic = true;
 
-            //[NOTE] -> Commented out hand lerp for hard prototyping
-            //StartCoroutine(SlerpHandTransforms(LeftHand, RightHand, currentInt.Left, currentInt.Right, 0.5f));
-            
+            //Set the Hand Postions
+            animationController.SetHandTransforms(currentInt.Left, currentInt.Right);
+            //Set Character Postion
             StartCoroutine(SlerpTransformLocal(this.transform, currentInt.playerPosition, 0.75f, Vector3.zero));
         }
     }
@@ -215,6 +197,7 @@ public class CharacterInteractController : MonoBehaviour
         //Drop/Release the currently Held Item
         //Debug.LogError($"Dropping in {releaseTime - releaseTimer}");
     }
+
     private IEnumerator SlerpTransformLocal(Transform holdObject, Transform holdPosition, float over_time, Vector3 offset)
     {
         holdObject.parent = holdPosition;
@@ -233,25 +216,6 @@ public class CharacterInteractController : MonoBehaviour
         }
         holdObject.localPosition = goal;
         holdObject.localRotation = goalRot;
-    }
-
-    private IEnumerator SlerpHandTransforms(Transform LeftHand, Transform RightHand, Transform LeftHold, Transform RightHold, float over_time)
-    {
-        Vector3 leftStart = LeftHand.position;
-        Vector3 leftEnd = LeftHold.position;
-        Vector3 rightStart = RightHand.position;
-        Vector3 rightEnd = RightHold.position;
-
-        float startTime = Time.time;
-
-        for (float t = 0; t < over_time; t += Time.time - startTime)
-        {
-            LeftHand.position = Vector3.Lerp(leftStart, leftEnd, t);
-            RightHand.position = Vector3.Lerp(rightStart, rightEnd, t);
-            yield return null;
-        }
-        LeftHand.position = leftEnd;
-        RightHand.position = rightEnd;
     }
 
 }

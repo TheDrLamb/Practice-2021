@@ -3,41 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterAnimController : MonoBehaviour
+public class CharacterAnimationController : MonoBehaviour
 {
-    Animator anim;
-    Rigidbody rigid;
-    public int GunAnimState = 1;
-    public float speed = 3;
-    public bool smoothing = true;
-    [Range(0.1f,2.0f)]
-    public float UpFrameWeight = 3.0f;
+    public Transform LeftHand, RightHand;
+    Transform LeftHold, RightHold;
 
-    float lastVelocity = 0;
-    float lastAngVelocity = 0;
-    float r = 0;
-
-    float physicsSpeed;
-    float physicsRotSpeed;
-
-    Quaternion strafeDir_LastTarget;
-
-    int dirSign = 1;
-
-    private void Start()
-    {
-        rigid = GetComponent<Rigidbody>();
-
-        anim = GetComponentInChildren<Animator>();
-
-        physicsSpeed = GetComponent<CharacterPhysicsController>().maxSpeed;
-        physicsRotSpeed = GetComponent<CharacterPhysicsController>().rotationSpeed;
-    }
+    public float handSlerpTime = 0.5f;
 
     void Update()
     {
-        //[NOTE] -> Determine the direction of the velocity with respect to the forward direction.
-        //          If the character is moving backwards the velocity should be negative, and the animation should change.
+
+        //[NOTE] -> Old Animation Controller Code
+        // If the character is moving backwards the velocity should be negative, and the animation should change.
+        /*
         Vector3 velocityVector = rigid.velocity;
         float velocity;
         velocity = Mathf.Sqrt((velocityVector.x * velocityVector.x) + (velocityVector.z * velocityVector.z)); //X-Z Planar velocity of the rigidbody
@@ -58,7 +36,7 @@ public class CharacterAnimController : MonoBehaviour
 
         anim.SetInteger("Gun", GunAnimState);
 
-        /*
+        
         if (inputController.IsMoving())
         {
             anim.SetBool("Running", true);
@@ -91,10 +69,47 @@ public class CharacterAnimController : MonoBehaviour
         */
     }
 
+    private void FixedUpdate()
+    {
+        UpdateHandVisuals();
+    }
+
     void GetDirectionFactors()
     {
         //dirSign = inputController.GetFowardSign();
         //anim.SetFloat("Strafe", inputController.GetStrafe());
     }
 
+    private void UpdateHandVisuals()
+    {
+        LeftHand.position = LeftHold.position;
+        LeftHand.rotation = LeftHold.rotation;
+        RightHand.position = RightHold.position;
+        RightHand.rotation = RightHold.rotation;
+    }
+
+    public void SetHandTransforms(Transform _LeftHold, Transform _RightHold)
+    {
+        LeftHold = _LeftHold;
+        RightHold = _RightHold;
+        //StartCoroutine(SlerpHandTransforms());
+    }
+    private IEnumerator SlerpHandTransforms()
+    {
+        Vector3 leftStart = LeftHand.position;
+        Vector3 leftEnd = LeftHold.position;
+        Vector3 rightStart = RightHand.position;
+        Vector3 rightEnd = RightHold.position;
+
+        float startTime = Time.time;
+
+        for (float t = 0; t < handSlerpTime; t += Time.time - startTime)
+        {
+            LeftHand.position = Vector3.Lerp(leftStart, leftEnd, t);
+            RightHand.position = Vector3.Lerp(rightStart, rightEnd, t);
+            yield return null;
+        }
+        LeftHand.position = leftEnd;
+        RightHand.position = rightEnd;
+    }
 }
