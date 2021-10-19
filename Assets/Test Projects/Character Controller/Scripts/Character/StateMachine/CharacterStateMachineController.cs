@@ -6,7 +6,7 @@ public class CharacterStateMachineController : MonoBehaviour
     CharacterState_Base currentState;
 
     //All States
-    CharacterState_ChildInteraction childInteract;
+    CharacterState_ChildInteraction childInteraction;
     CharacterState_ParentInteraction parentInteraction;
     CharacterState_Gun gunState;
 
@@ -16,7 +16,7 @@ public class CharacterStateMachineController : MonoBehaviour
     {
         parentInteraction = new CharacterState_ParentInteraction(this);
 
-        childInteract = new CharacterState_ChildInteraction(this);
+        childInteraction = new CharacterState_ChildInteraction(this);
         gunState = new CharacterState_Gun(this);
 
         Initialize(gunState);
@@ -43,6 +43,21 @@ public class CharacterStateMachineController : MonoBehaviour
         currentState.Exit();
         currentState = newState;
         currentState.Enter();
+    }
+
+    public void ChangeState(CharacterState newState) {
+        switch (newState)
+        {
+            case CharacterState.ChildInteraction:
+                ChangeState(childInteraction);
+                break;
+            case CharacterState.ParentInteraction:
+                ChangeState(parentInteraction);
+                break;
+            case CharacterState.Gun:
+                ChangeState(gunState);
+                break;
+        }
     }
 }
 

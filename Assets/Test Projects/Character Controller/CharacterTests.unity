@@ -470,6 +470,7 @@ GameObject:
   - component: {fileID: 146339626}
   - component: {fileID: 146339627}
   - component: {fileID: 146339629}
+  - component: {fileID: 146339631}
   m_Layer: 12
   m_Name: CharacterController
   m_TagString: Player
@@ -576,6 +577,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &146339631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 146339624}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d387b47fe14edea40b3f6455e87ca944, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HoldLocation: {fileID: 538905529}
+  LeftHand: {fileID: 1479496433}
+  RightHand: {fileID: 118015873}
+  interactableLayer:
+    serializedVersion: 2
+    m_Bits: 8192
+  interactionRange: 2
+  currentInteract: {fileID: 0}
+  buttonHoldTime: 0.8
 --- !u!1 &226877364
 GameObject:
   m_ObjectHideFlags: 0

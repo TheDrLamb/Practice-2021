@@ -18,6 +18,13 @@ public class CharacterState_ChildInteraction : CharacterState_Mobile
     protected override void LogicUpdate()
     {
         base.LogicUpdate();
+        if (interact > inputDeadzone)
+        {
+            if (interactDown)
+            {
+                InteractHeld();
+            }
+        }
     }
 
     protected override void VisualUpdate()
@@ -34,5 +41,10 @@ public class CharacterState_ChildInteraction : CharacterState_Mobile
     public override void Exit()
     {
 
+    }
+
+    void InteractHeld()
+    {
+        interactController.InteractHeld();
     }
 }

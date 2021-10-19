@@ -22,7 +22,6 @@ public class CharacterAnimController : MonoBehaviour
 
     Quaternion strafeDir_LastTarget;
 
-    CharacterInputController inputController;
     int dirSign = 1;
 
     private void Start()
@@ -33,8 +32,6 @@ public class CharacterAnimController : MonoBehaviour
 
         physicsSpeed = GetComponent<CharacterPhysicsController>().maxSpeed;
         physicsRotSpeed = GetComponent<CharacterPhysicsController>().rotationSpeed;
-
-        inputController = GetComponent<CharacterInputController>();
     }
 
     void Update()
@@ -61,7 +58,7 @@ public class CharacterAnimController : MonoBehaviour
 
         anim.SetInteger("Gun", GunAnimState);
 
-        
+        /*
         if (inputController.IsMoving())
         {
             anim.SetBool("Running", true);
@@ -89,14 +86,15 @@ public class CharacterAnimController : MonoBehaviour
             anim.SetFloat("Sin", Mathf.Sin(r) * blendFactor);
             anim.SetFloat("Cos", Mathf.Cos(r) * blendFactor);
 
-            anim.SetBool("Rotating", Mathf.Abs(angVelocity) > inputController.inputDeadzone);
+            //anim.SetBool("Rotating", Mathf.Abs(angVelocity) > inputController.inputDeadzone);
         }
+        */
     }
 
     void GetDirectionFactors()
     {
-        dirSign = inputController.GetFowardSign();
-        anim.SetFloat("Strafe", inputController.GetStrafe());
+        //dirSign = inputController.GetFowardSign();
+        //anim.SetFloat("Strafe", inputController.GetStrafe());
     }
 
 }

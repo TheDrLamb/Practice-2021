@@ -16,14 +16,11 @@ public class CharacterInteractController : MonoBehaviour
     public float buttonHoldTime = 1.5f;
     float buttonHoldTimer;
 
-    CharacterCombatController shooting;
-    CharacterInputController inputController;
-
+    CharacterStateMachineController stateMachine;
 
     private void Start()
     {
-        shooting = GetComponent<CharacterCombatController>();
-        inputController = GetComponent<CharacterInputController>();
+        stateMachine = GetComponent<CharacterStateMachineController>();
     }
 
     private void Update()
@@ -44,7 +41,6 @@ public class CharacterInteractController : MonoBehaviour
         //Choose the one closest to the cursor and set it as the target
 
         //[NOTE] -> Update to check near cursor for the future
-
         Collider[] interactables = Physics.OverlapSphere(this.transform.position, interactionRange, interactableLayer);
         if (interactables.Length > 0) {
             float  d = 9999;
@@ -110,13 +106,11 @@ public class CharacterInteractController : MonoBehaviour
             buttonHoldTimer += Time.deltaTime;
             if (buttonHoldTimer >= buttonHoldTime)
             {
-                /*
-                if (inputController.state = PlayerState.ChildInteraction || inputController.state == PlayerState.ParentInteraction)
+                if (stateMachine.status == CharacterState.ChildInteraction || stateMachine.status == CharacterState.ParentInteraction)
                 {
                     ReleaseVisualUpdate();
                     Release();
                 }
-                */
             }
         }
     }
@@ -131,14 +125,18 @@ public class CharacterInteractController : MonoBehaviour
         if(currentInteract != null)
         {
             //Release currently held object
-            Release();
+            Release(true);
         }
         //Check Interactable type
         currentInteract = target;
         currentInteract.Interact();
         if (target.GetComponent<ChildInteractable>())
         {
-            //inputController.state  PlayerState.ChildInteraction;
+            // *************
+            // Send Message to the stateMachine to transition to the ChildInteraction State
+            // *************
+            stateMachine.ChangeState(CharacterState.ChildInteraction);
+
             //Grab the new item
             ChildInteractable currentHold = currentInteract.GetComponent<ChildInteractable>();
             Vector3 offset = currentInteract.GetComponent<ChildInteractable>().offset;
@@ -156,16 +154,19 @@ public class CharacterInteractController : MonoBehaviour
         if (currentInteract != null)
         {
             //Release currently held object
-            Release();
+            Release(true);
         }
         //Check Interactable type
         currentInteract = target;
         currentInteract.Interact();
         if (target.GetComponent<ParentInteractable>())
         {
-            Debug.Log("Fixed Interaction");
-            //Set state Hold
-            //state = InteractionState.ParentInteraction;
+            //Set state
+            // *************
+            // Send Message to the stateMachine to transition to the ParentInteraction State
+            // *************
+            stateMachine.ChangeState(CharacterState.ParentInteraction);
+
             //Reverse grab onto the Interactable
             ParentInteractable currentInt = currentInteract.GetComponent<ParentInteractable>();
             GetComponent<Rigidbody>().isKinematic = true;
@@ -177,9 +178,10 @@ public class CharacterInteractController : MonoBehaviour
         }
     }
 
-    private void Release() {
+    private void Release(bool swap = false) {
         //Drop/Release the currently Held Item
         currentInteract.Interact();
+
         //If held Item
         if (currentInteract.GetComponent<ChildInteractable>())
         {
@@ -197,8 +199,14 @@ public class CharacterInteractController : MonoBehaviour
             GetComponent<Rigidbody>().isKinematic = false;
         }
 
-        //inputController.state  PlayerState.HoldingGun;
-        //[NOTE] -> Tell Input contr
+        if (!swap)
+        {
+            // *************
+            // Send Message to the stateMachine to transition to the Gun State
+            // *************
+            stateMachine.ChangeState(CharacterState.Gun);
+        }
+
         currentInteract = null;
     }
 

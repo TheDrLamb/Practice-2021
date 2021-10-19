@@ -3,9 +3,6 @@ using System.Collections;
 
 public class CharacterState_Mobile : CharacterState_Base
 {
-    float forwardRaw, forward;
-    float rightRaw, right;
-    float inputDeadzone;
     LayerMask mapLayer;
     bool moving;
 
@@ -21,25 +18,28 @@ public class CharacterState_Mobile : CharacterState_Base
 
     protected override void InputUpdate()
     {
-        forwardRaw = Input.GetAxis("Vertical");
-        rightRaw = Input.GetAxis("Horizontal");
+        base.InputUpdate();
     }
 
     protected override void LogicUpdate()
     {
-        forward = right = 0;
-
-        if (Mathf.Abs(forwardRaw) > inputDeadzone)
-        {
-            forward = Mathf.Clamp(forwardRaw, -1.0f, 1.0f);
-        }
-
-        if (Mathf.Abs(rightRaw) > inputDeadzone)
-        {
-            right = Mathf.Clamp(rightRaw, -1.0f, 1.0f);
-        }
+        base.LogicUpdate();
 
         moving = Mathf.Abs(forwardRaw) > inputDeadzone;
+
+        if (interact > inputDeadzone)
+        {
+            if (!interactDown)
+            {
+                interactDown = true;
+                InteractDown();
+            }
+        }
+        else 
+        {
+            interactDown = false;
+            InteractUp();
+        }
     }
 
     protected override void VisualUpdate()
@@ -94,4 +94,13 @@ public class CharacterState_Mobile : CharacterState_Base
         physicsController.SetLookDirection(lookDir);
     }
 
+    void InteractDown() 
+    {
+        interactController.InteractDown();
+    }
+
+    void InteractUp()
+    {
+        interactController.InteractUp();
+    }
 }
