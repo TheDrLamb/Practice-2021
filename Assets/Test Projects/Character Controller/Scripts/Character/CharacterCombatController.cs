@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
+using System.Linq;
 using UnityEngine;
 
 public class CharacterCombatController : MonoBehaviour
 {
-    public GameObject Gun;
-    public Transform GunHoldLeft, GunHoldRight;
+    public Equipment[] equipmentList;
+    public Equipment currentEquipment;
 
     CharacterAnimationController animationController;
 
@@ -14,18 +16,41 @@ public class CharacterCombatController : MonoBehaviour
         animationController = GetComponent<CharacterAnimationController>();
     }
 
-    public void EquipGun() {
-        Gun.SetActive(true);
-        animationController.SetHandTransforms(GunHoldLeft, GunHoldRight);
+    public void Equip(EquipmentType type) 
+    {
+        currentEquipment = equipmentList.Where(e => e.type == type).FirstOrDefault();
+        currentEquipment.obj.SetActive(true);
+        animationController.SetHandTransforms(currentEquipment.leftHold, currentEquipment.rightHold);
     }
 
-    public void UnequipGun() {
-        Gun.SetActive(false);
+    public void Unequip() {
+        currentEquipment.obj.SetActive(false);
+        currentEquipment = null;
+    }
+
+    public void TriggerDown() {
+        Debug.Log("Bang!");
+    }
+
+    public void TriggerHeld(int id) {
+        if (id == 0)
+        {
+            Debug.Log("BRRRRRRRrrrrr....");
+        }
+        else {
+            Debug.Log("Taking Aim!");
+        }
     }
 }
-enum CurrentWeapon { 
+public enum EquipmentType { 
     Gun,
-    Consumable,
     Tool,
-    Equipment
+    Consumable
+}
+
+[Serializable]
+public class Equipment {
+    public GameObject obj;
+    public EquipmentType type;
+    public Transform leftHold, rightHold;
 }

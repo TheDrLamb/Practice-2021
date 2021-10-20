@@ -1,15 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CharacterState_Gun : CharacterState_Combat
+public class CharacterState_Consumable : CharacterState_Combat
 {
-    public CharacterState_Gun(CharacterStateMachineController _stateMachine) : base(_stateMachine) 
-    {}
+    public CharacterState_Consumable(CharacterStateMachineController _stateMachine) : base(_stateMachine) { }
 
     public override void Enter()
     {
-        stateMachine.status = CharacterState.Gun;
-        combatController.Equip(EquipmentType.Gun);
+        stateMachine.status = CharacterState.Consumable;
+        combatController.Equip(EquipmentType.Consumable);
     }
 
     protected override void InputUpdate()

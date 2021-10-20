@@ -168,7 +168,7 @@ public class CharacterInteractController : MonoBehaviour
         if (currentInteract.GetComponent<ChildInteractable>())
         {
             //Add Random Force to the Dropped Item
-            Vector3 dirR = this.transform.forward + (this.transform.right * Random.Range(-1.5f, 1.5f)) + (0.5f * this.transform.up);
+            Vector3 dirR = currentInteract.transform.forward + (currentInteract.transform.right * Random.Range(-1.5f, 1.5f)) + (0.5f * currentInteract.transform.up);
             currentInteract.GetComponent<Rigidbody>().AddForce(dirR * 250, ForceMode.Acceleration);
             currentInteract.GetComponent<Rigidbody>().AddTorque(-dirR * 250, ForceMode.Acceleration);
         }

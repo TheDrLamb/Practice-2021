@@ -51,11 +51,6 @@ public class CharacterState_ParentInteraction : CharacterState_Base
         ((ParentInteractable)interactController.currentInteract).UpdateInput(new Vector2(right,forward));
     }
 
-    public override void Exit()
-    {
-
-    }
-
     void InteractHeld()
     {
         interactController.InteractHeld();

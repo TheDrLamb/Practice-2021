@@ -37,12 +37,6 @@ public class CharacterState_ChildInteraction : CharacterState_Mobile
         base.PhysicsUpdate();
     }
 
-
-    public override void Exit()
-    {
-
-    }
-
     void InteractHeld()
     {
         interactController.InteractHeld();

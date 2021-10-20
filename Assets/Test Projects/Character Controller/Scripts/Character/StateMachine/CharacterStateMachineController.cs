@@ -5,19 +5,24 @@ public class CharacterStateMachineController : MonoBehaviour
 {
     CharacterState_Base currentState;
 
-    //All States
+    //Interaction States
     CharacterState_ChildInteraction childInteraction;
     CharacterState_ParentInteraction parentInteraction;
+
+    //Combat States
     CharacterState_Gun gunState;
+    CharacterState_Tool toolState;
+    CharacterState_Consumable consumableState;
 
     public CharacterState status;
 
     private void Start()
     {
         parentInteraction = new CharacterState_ParentInteraction(this);
-
         childInteraction = new CharacterState_ChildInteraction(this);
         gunState = new CharacterState_Gun(this);
+        toolState = new CharacterState_Tool(this);
+        consumableState = new CharacterState_Consumable(this);
 
         Initialize(gunState);
     }
@@ -57,6 +62,12 @@ public class CharacterStateMachineController : MonoBehaviour
             case CharacterState.Gun:
                 ChangeState(gunState);
                 break;
+            case CharacterState.Tool:
+                ChangeState(toolState);
+                break;
+            case CharacterState.Consumable:
+                ChangeState(consumableState);
+                break;
         }
     }
 }
@@ -64,5 +75,7 @@ public class CharacterStateMachineController : MonoBehaviour
 public enum CharacterState { 
     ParentInteraction,
     ChildInteraction,
-    Gun
+    Gun,
+    Tool,
+    Consumable
 }

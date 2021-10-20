@@ -1,15 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CharacterState_Gun : CharacterState_Combat
+
+public class CharacterState_Tool : CharacterState_Combat
 {
-    public CharacterState_Gun(CharacterStateMachineController _stateMachine) : base(_stateMachine) 
-    {}
+    public CharacterState_Tool(CharacterStateMachineController _stateMachine) : base(_stateMachine){ }
 
     public override void Enter()
     {
-        stateMachine.status = CharacterState.Gun;
-        combatController.Equip(EquipmentType.Gun);
+        stateMachine.status = CharacterState.Tool;
+        combatController.Equip(EquipmentType.Tool);
     }
 
     protected override void InputUpdate()
@@ -32,3 +32,4 @@ public class CharacterState_Gun : CharacterState_Combat
         base.PhysicsUpdate();
     }
 }
+
