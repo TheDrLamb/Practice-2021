@@ -139,8 +139,4 @@ public class CharacterPhysicsController : MonoBehaviour
     float AccelerationFromDot(float _dotProduct) {
         return Mathf.Clamp(1 - _dotProduct,1,2);
     }
-
-    public Vector3 GetMoveDir() {
-        return old_Move;
-    }
 }
