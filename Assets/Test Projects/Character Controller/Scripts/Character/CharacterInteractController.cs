@@ -90,6 +90,7 @@ public class CharacterInteractController : MonoBehaviour
             {
                 if (stateMachine.status == CharacterState.ChildInteraction || stateMachine.status == CharacterState.ParentInteraction)
                 {
+                    buttonHoldTimer = 0;
                     ReleaseVisualUpdate();
                     Release();
                 }
@@ -164,21 +165,28 @@ public class CharacterInteractController : MonoBehaviour
         //Drop/Release the currently Held Item
         currentInteract.Interact();
 
-        //If held Item
+        //If child
         if (currentInteract.GetComponent<ChildInteractable>())
         {
             //Add Random Force to the Dropped Item
+            Vector3 tempPos = currentInteract.transform.position;
+            currentInteract.transform.parent = null;
+            currentInteract.transform.position = tempPos;
+
             Vector3 dirR = currentInteract.transform.forward + (currentInteract.transform.right * Random.Range(-1.5f, 1.5f)) + (0.5f * currentInteract.transform.up);
             currentInteract.GetComponent<Rigidbody>().AddForce(dirR * 250, ForceMode.Acceleration);
             currentInteract.GetComponent<Rigidbody>().AddTorque(-dirR * 250, ForceMode.Acceleration);
         }
 
-        //If fixed
+        //If parent
         if (currentInteract.GetComponent<ParentInteractable>())
         {
             //Unparent the player
+            Vector3 tempPos = this.transform.position;
             this.transform.parent = null;
+            this.transform.position = tempPos;
             GetComponent<Rigidbody>().isKinematic = false;
+            //[Note] -> Add force to the player to bounce them back
         }
 
         if (!swap)
@@ -186,7 +194,7 @@ public class CharacterInteractController : MonoBehaviour
             // *************
             // Send Message to the stateMachine to transition to the Gun State
             // *************
-            stateMachine.ChangeState(CharacterState.Gun);
+            stateMachine.ChangeState(CharacterState.Gun, true);
         }
 
         currentInteract = null;

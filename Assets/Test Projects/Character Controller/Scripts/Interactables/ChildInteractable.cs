@@ -25,6 +25,5 @@ public class ChildInteractable : GrabbableInteractable
         base.Drop();
         col.enabled = true;
         rigid.isKinematic = false;
-        this.transform.parent = null;
     }
 }

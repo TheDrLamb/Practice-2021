@@ -9,7 +9,7 @@ public class CharacterCombatController : MonoBehaviour
     public Equipment[] equipmentList;
     public Equipment currentEquipment;
 
-    CharacterAnimationController animationController;
+    public CharacterAnimationController animationController;
 
     private void Start()
     {

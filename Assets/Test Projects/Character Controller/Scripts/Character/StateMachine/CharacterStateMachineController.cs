@@ -43,30 +43,31 @@ public class CharacterStateMachineController : MonoBehaviour
         currentState.Enter();
     }
 
-    public void ChangeState(CharacterState_Base newState)
+    public void ChangeState(CharacterState_Base newState, bool interactDown = false)
     {
         currentState.Exit();
         currentState = newState;
         currentState.Enter();
+        currentState.interactDown = interactDown;
     }
 
-    public void ChangeState(CharacterState newState) {
+    public void ChangeState(CharacterState newState, bool interactDown = false) {
         switch (newState)
         {
             case CharacterState.ChildInteraction:
-                ChangeState(childInteraction);
+                ChangeState(childInteraction, interactDown);
                 break;
             case CharacterState.ParentInteraction:
-                ChangeState(parentInteraction);
+                ChangeState(parentInteraction, interactDown);
                 break;
             case CharacterState.Gun:
-                ChangeState(gunState);
+                ChangeState(gunState, interactDown);
                 break;
             case CharacterState.Tool:
-                ChangeState(toolState);
+                ChangeState(toolState, interactDown);
                 break;
             case CharacterState.Consumable:
-                ChangeState(consumableState);
+                ChangeState(consumableState, interactDown);
                 break;
         }
     }
