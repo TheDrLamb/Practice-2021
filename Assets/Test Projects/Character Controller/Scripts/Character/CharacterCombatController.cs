@@ -46,16 +46,3 @@ public class CharacterCombatController : MonoBehaviour
         }
     }
 }
-public enum EquipmentType { 
-    Gun,
-    Tool,
-    Consumable,
-    Throwable
-}
-
-[Serializable]
-public class Equipment {
-    public GameObject obj;
-    public EquipmentType type;
-    public Transform leftHold, rightHold;
-}
