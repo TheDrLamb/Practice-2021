@@ -8,7 +8,6 @@ public class CharacterState_Consumable : CharacterState_Combat
     public override void Enter()
     {
         stateMachine.status = CharacterState.Consumable;
-        combatController.Equip(EquipmentType.Consumable);
     }
 
     protected override void InputUpdate()

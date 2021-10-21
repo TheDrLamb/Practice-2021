@@ -9,7 +9,6 @@ public class CharacterState_Gun : CharacterState_Combat
     public override void Enter()
     {
         stateMachine.status = CharacterState.Gun;
-        combatController.Equip(EquipmentType.Gun);
     }
 
     protected override void InputUpdate()

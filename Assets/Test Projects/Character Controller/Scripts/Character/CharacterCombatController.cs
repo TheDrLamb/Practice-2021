@@ -9,18 +9,22 @@ public class CharacterCombatController : MonoBehaviour
     public Equipment[] equipmentList;
     public Equipment currentEquipment;
 
-    public CharacterAnimationController animationController;
+    CharacterAnimationController animationController;
+    CharacterStateMachineController StateMachine;
 
     private void Start()
     {
         animationController = GetComponent<CharacterAnimationController>();
+        StateMachine = GetComponent<CharacterStateMachineController>();
     }
 
-    public void Equip(EquipmentType type) 
+    public void Equip(int id = 0, bool interactDown = false) 
     {
-        currentEquipment = equipmentList.Where(e => e.type == type).FirstOrDefault();
+        //[NOTE] -> Change the way equipment works to go off of the array index.
+        currentEquipment = equipmentList[id];
         currentEquipment.obj.SetActive(true);
         animationController.SetHandTransforms(currentEquipment.leftHold, currentEquipment.rightHold);
+        StateMachine.ChangeState((CharacterState)currentEquipment.type + 2, interactDown);
     }
 
     public void Unequip() {
@@ -45,7 +49,8 @@ public class CharacterCombatController : MonoBehaviour
 public enum EquipmentType { 
     Gun,
     Tool,
-    Consumable
+    Consumable,
+    Throwable
 }
 
 [Serializable]

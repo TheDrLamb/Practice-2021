@@ -580,9 +580,9 @@ GameObject:
   - component: {fileID: 146339626}
   - component: {fileID: 146339627}
   - component: {fileID: 146339629}
+  - component: {fileID: 146339633}
   - component: {fileID: 146339631}
   - component: {fileID: 146339632}
-  - component: {fileID: 146339633}
   m_Layer: 12
   m_Name: CharacterController
   m_TagString: Player
@@ -723,8 +723,8 @@ MonoBehaviour:
   equipmentList:
   - obj: {fileID: 1638250403}
     type: 0
-    leftHold: {fileID: 43521207}
-    rightHold: {fileID: 643472682}
+    leftHold: {fileID: 643472682}
+    rightHold: {fileID: 43521207}
   - obj: {fileID: 57522671}
     type: 1
     leftHold: {fileID: 617746802}
@@ -738,6 +738,7 @@ MonoBehaviour:
     type: 0
     leftHold: {fileID: 0}
     rightHold: {fileID: 0}
+  animationController: {fileID: 0}
 --- !u!114 &146339633
 MonoBehaviour:
   m_ObjectHideFlags: 0

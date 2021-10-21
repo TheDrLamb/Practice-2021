@@ -78,5 +78,6 @@ public enum CharacterState {
     ChildInteraction,
     Gun,
     Tool,
-    Consumable
+    Consumable,
+    Throwable
 }

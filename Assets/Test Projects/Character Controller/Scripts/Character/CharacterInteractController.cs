@@ -16,11 +16,13 @@ public class CharacterInteractController : MonoBehaviour
     float buttonHoldTimer;
 
     CharacterStateMachineController stateMachine;
+    CharacterCombatController combatController;
     CharacterAnimationController animationController;
 
     private void Start()
     {
         stateMachine = GetComponent<CharacterStateMachineController>();
+        combatController = GetComponent<CharacterCombatController>();
         animationController = GetComponent<CharacterAnimationController>();
     }
 
@@ -192,9 +194,9 @@ public class CharacterInteractController : MonoBehaviour
         if (!swap)
         {
             // *************
-            // Send Message to the stateMachine to transition to the Gun State
+            // Transition to default equipment state
             // *************
-            stateMachine.ChangeState(CharacterState.Gun, true);
+            combatController.Equip();
         }
 
         currentInteract = null;
