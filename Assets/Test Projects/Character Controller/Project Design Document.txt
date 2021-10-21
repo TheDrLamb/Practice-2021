@@ -1,0 +1,240 @@
+
+
+To Do List:
+---------------------------------
+	[] Enemy AI
+	   --------
+		- State Machine
+			- Waiting
+			- Chasing - > When applicable?
+			- Attacking
+			
+		- AI Director
+			- Room Trigger
+				-> The AI are given a target based on the room they occupy when the target enters the room
+				-> This target is not cleared if they leave the room only when they die
+			- Target Splitting
+				-> ensure that no one player has more enemies assigned to them
+				-> base the split on threat level
+			- Enemy Spawning
+				-> spawn enemies in rooms that are empty, also try and spawn enemies behind or in front of the players
+				-> enemies spawned behind will be assigned targets, enemies in front will be set to wait.
+				
+		- Attacking
+			- Animate / Wind Up
+			- Cooldown
+			- Damage Player
+			
+		- Movement (Boid-Like)
+			- Generate Steering Behavior Vectors
+				- Adhesion
+				- Alignment
+				- Obstacle Avoidance
+				- Targeting
+			- Summate Steering Behaviors
+			
+			[NOTE] Create a new data class for steering vector that includes a weight variable
+				   Add all of the steering vectors to a list when theyre generated and do a weighted summation to get the combined vector 
+				   Then the movement code will make a call to the steering behavior class and get back the combined vector  
+		
+		
+	[] Painting System (For Blood Splatter)
+	   ------------------------------------
+		- Write to Texture
+			- Write from particle System or simply on enemy death w/ direction
+		- Custom Shader
+		
+	[] Player Interactables
+	   ----------------------------------
+		4 Types
+		-------
+		- Child
+		- Parent
+		- Static
+		- Physics
+		
+		Child
+		-----
+		- Holdable Items
+	    - Pick Up Item
+			- Transforms attached to player with smooth follow parent scripts (1-Hand and 2-Hand Items)
+			- Hands IK's snap to "Holds"
+			- Item Lerps to transform
+		- Drop Item
+			- Un-parent the Item from the hold transform
+			- Enable the Item to Ragdoll/Interact via Physics.
+			
+	   Parent
+	   ------
+		- 1D Movement
+			- e.g. Sliders, Rotating Objects (Turntables)
+			- The Hands attach to "Holds" on the interactable via Rigidbody joints
+			- When grabbed the interactable will enable code determined by its type.
+				<Psuedo Plan>
+				---------------
+				- Player will Lerp to a fixed position and rotation based on the interactables "player standing point" transform
+				- The player will be parented to the interactable in a "Reverse Grab" (set to kinematic)?
+				- Conditionally Limit/Turn off player movement/rotation in the Input controller.
+				- Enable the interactable's movement controllers
+				- The interactable will get inputs from the player input controller in the form of a Vector2 containing the raw forward and right inputs
+				- The interactable will preform some action based on the inputs
+				- Multiple "Release" conditions based on input
+					i.e. The Interact Button, and for a horizontal slider the vertical input as well
+					
+		- 2D Movement
+			- e.g. Control Sticks, Jig Saw, Obstacles
+			- Works similarly to the single axis, however the additional "Release" Conditons are made more complex
+			
+		- Stationary Interactables
+			- e.g. Computer Panels, Puzzles
+			- Locks the player, then enables the cursor to interact with a UI element
+				-> Would like to have real world UI elements display that multiple players can interact with.
+		
+		Static
+		------
+		- OnClick Interactables
+			- e.g. Buttons, Kick ball
+		- OnHold Interactables
+			- e.g. Locked Doors, Draw Bridges, Elevators
+			
+		Physics
+		-------
+		- Objects that move freely by physics when "held" by the player
+		- Simply a joint will be formed between the interactable and the player, and the object will enable its movement.
+				
+	[] Player Equipment
+	   ----------------
+		Data
+		----
+			- Hand Holds  
+				- Left
+				- Right
+				[NOTE] -> Eventually may be [partially] deprecated by an animation state
+					   -> Maintain a hand hold for tools and guns, but constrain the equipment to the other hand
+					   
+			- Animation state
+			
+			- Animation IK Weight
+				- Left
+				- Right
+				
+			- Equipment Type
+			
+			- GameObject
+			
+		Types
+		-----
+		- Gun
+			- Equip and Unequip
+			- Use
+		
+		- Tool
+			- Equip and Unequip
+			- Use
+			- Swap
+		
+		- Consumables (2 per player)
+			SubTypes
+			--------
+			- Throwable
+				- Equip and Unequip
+				- Use
+				- Swap
+			- Usable
+				- Equip and Unequip
+				- Use
+				- Swap
+			
+	[] Player Combat
+	   -------------
+	   - Player State Machine
+			- Interacting
+				-> Transition [Grab Gun] -> Holding Gun
+			- Holding Gun
+				-> Transition [Store Item] -> Interacting
+				-> Transition [Store-Grab Item] -> Hold Consumables0
+				-> Transition [Store-Grab Item] -> Hold Tool
+			- Hold Consumables
+				-> Transition [Store Item] -> Interacting
+				-> Transition [Store-Grab Item] -> Hold Gun
+				-> Transition [Store-Grab Item] -> Hold Tool
+			- Hold Tool
+				-> Transition [Store Item] -> Interacting
+				-> Transition [Store-Grab Item] -> Hold Gun
+				-> Transition [Store-Grab Item] -> Hold Tool
+	   
+	   - Shooting
+			- Single Shot
+			- Machine Gun
+			- Shotgun
+			- Laser/Flamthrower
+			- Grenade Launcher
+			- Piercer/Rail Gun
+			
+	   - Tool - Melee Weapon
+			- The tools are context based items as well as melee weapons.
+				Theyre similar to the Items in Darkest Dungeon, or Element Weapons in Hunt Showdown.
+				The tools will allow players a leg up in specific "Puzzles" and interactions
+			- Players can only have one tool so teamwork and diversification is important.
+				
+				- Wrench
+				- Crowbar
+				- Shield?
+				
+	   
+	   - Throwables
+			- Grenades
+			- Mines
+			- Turrets
+			- Traps
+			- Blockers
+				- Vents
+				- Doors
+				
+		-Consumables
+			- First Aid Kit
+			- Anti-toxin
+			- The Juice (Speed boost)
+			
+				
+	   - Gun Projectiles
+			- Vertex Displacement -> Simulate an amorphous blob
+			- Glow outline
+			- Impact Particle System
+			- Blob Trail - Multi-Mesh Particle System
+			
+	   - Gun Animations
+			- Normal displace -> Gun bulges from the through the cannister when shot.
+			- Ammo Gauge - Real world gauge on the gun that shows the ammo.
+			- Player Animations: 
+				- Storing
+				- Grabbing
+			- Kick Back when fired
+			
+			
+	[] Enemy Types - Variants
+	   ----------------------
+	   - Stationary Hazard i.e. Mine
+	   
+	   - Stationary Ranged i.e. Turret
+	   
+	   - Mobile Leaping
+	   
+	   - Mobile Charge Attack
+	   
+	   - Mobile Biting/Melee
+	   
+	   - Mobile Ranged
+	
+	Procedural Map Generation
+	Procedural Character Animations
+	Procedural Enemy Animations
+	Character Creator
+	Real World UI
+		- Like Astroneer
+		- Allow multiple player to use UI at once
+	Rising Marching Squares Viscera Mesh
+	
+	Advertising Idea
+	- Mock commercials of the game featuring fake "Mobile Game" ads. Pull the pin puzzles, ect.
+	
