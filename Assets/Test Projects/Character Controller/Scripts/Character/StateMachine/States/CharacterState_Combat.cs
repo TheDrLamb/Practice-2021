@@ -38,13 +38,10 @@ public class CharacterState_Combat : CharacterState_Mobile
         {
             equipment = 2;
         }
-        /*
-         * [NOTE] -> For Second equipment eventually
         if (Input.GetAxis("Equipment4") > 0)
         {
             equipment = 3;
         }
-        */
     }
 
     protected override void LogicUpdate()
@@ -88,7 +85,7 @@ public class CharacterState_Combat : CharacterState_Mobile
         }
 
         //Check for Equipment Swap Buttons
-        if(equipment >= 0) EquipmentSwap((CharacterState)equipment + 2);
+        if(equipment >= 0) combatController.Equip(equipment);
     }
 
     protected override void VisualUpdate()
@@ -112,9 +109,5 @@ public class CharacterState_Combat : CharacterState_Mobile
 
     void TriggerHeld(int id) {
         combatController.TriggerHeld(id);
-    }
-
-    void EquipmentSwap(CharacterState newState) {
-        stateMachine.ChangeState(newState);
     }
 }

@@ -16,11 +16,13 @@ public class CharacterCombatController : MonoBehaviour
     {
         animationController = GetComponent<CharacterAnimationController>();
         StateMachine = GetComponent<CharacterStateMachineController>();
+        Equip(0); // Defaulting
     }
 
     public void Equip(int id = 0, bool interactDown = false) 
     {
         //[NOTE] -> Change the way equipment works to go off of the array index.
+        Unequip();
         currentEquipment = equipmentList[id];
         currentEquipment.obj.SetActive(true);
         animationController.SetHandTransforms(currentEquipment.leftHold, currentEquipment.rightHold);
@@ -28,8 +30,11 @@ public class CharacterCombatController : MonoBehaviour
     }
 
     public void Unequip() {
-        currentEquipment.obj.SetActive(false);
-        currentEquipment = null;
+        if (currentEquipment)
+        {
+            currentEquipment.obj.SetActive(false);
+            currentEquipment = null;
+        }
     }
 
     public void TriggerDown() {
