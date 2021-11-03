@@ -10,7 +10,7 @@ public class CharacterCombatController : MonoBehaviour
     public Equipment currentEquipment;
 
     CharacterAnimationController animationController;
-    CharacterStateMachineController StateMachine;
+    public CharacterStateMachineController StateMachine;
 
     private void Start()
     {
@@ -21,12 +21,12 @@ public class CharacterCombatController : MonoBehaviour
 
     public void Equip(int id = 0, bool interactDown = false) 
     {
-        //[NOTE] -> Change the way equipment works to go off of the array index.
-        Unequip();
+        //Swap State -> Unequips current Equipment
+        StateMachine.ChangeState((CharacterState)equipmentList[id].type + 2, interactDown);
+
         currentEquipment = equipmentList[id];
         currentEquipment.obj.SetActive(true);
         animationController.SetHandTransforms(currentEquipment.leftHold, currentEquipment.rightHold);
-        StateMachine.ChangeState((CharacterState)currentEquipment.type + 2, interactDown);
     }
 
     public void Unequip() {

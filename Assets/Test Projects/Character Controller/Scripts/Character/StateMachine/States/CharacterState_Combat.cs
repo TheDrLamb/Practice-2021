@@ -85,7 +85,7 @@ public class CharacterState_Combat : CharacterState_Mobile
         }
 
         //Check for Equipment Swap Buttons
-        if(equipment >= 0) combatController.Equip(equipment);
+        if(equipment > -1) combatController.Equip(equipment);
     }
 
     protected override void VisualUpdate()

@@ -13,6 +13,7 @@ public class CharacterStateMachineController : MonoBehaviour
     CharacterState_Gun gunState;
     CharacterState_Tool toolState;
     CharacterState_Consumable consumableState;
+    CharacterState_Throwable throwableState;
 
     public CharacterState status;
 
@@ -23,6 +24,7 @@ public class CharacterStateMachineController : MonoBehaviour
         gunState = new CharacterState_Gun(this);
         toolState = new CharacterState_Tool(this);
         consumableState = new CharacterState_Consumable(this);
+        throwableState = new CharacterState_Throwable(this);
 
         Initialize(gunState);
     }
@@ -68,6 +70,9 @@ public class CharacterStateMachineController : MonoBehaviour
                 break;
             case CharacterState.Consumable:
                 ChangeState(consumableState, interactDown);
+                break;
+            case CharacterState.Throwable:
+                ChangeState(throwableState, interactDown);
                 break;
         }
     }
