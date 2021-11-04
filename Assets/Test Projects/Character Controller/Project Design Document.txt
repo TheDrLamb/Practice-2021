@@ -122,6 +122,8 @@ To Do List:
 			
 			- GameObject
 			
+			- Equipment Actions
+			
 		Types
 		-----
 		- Gun
@@ -144,25 +146,23 @@ To Do List:
 				- Equip and Unequip
 				- Use
 				- Swap
-			
+				
+	[] Equipment Actions
+	   -----------------
+	   - Control the use of the currently held equipment
+	   - Customizeable to each equipment
+	   - Possible to have multiple actions on a given piece of equipment
+	   - Controls animations, logic, and physics during combat based on the equipment that is held, like a secondary State Machine
+		
 	[] Player Combat
 	   -------------
 	   - Player State Machine
 			- Interacting
 				-> Transition [Grab Gun] -> Holding Gun
-			- Holding Gun
-				-> Transition [Store Item] -> Interacting
-				-> Transition [Store-Grab Item] -> Hold Consumables0
-				-> Transition [Store-Grab Item] -> Hold Tool
-			- Hold Consumables
-				-> Transition [Store Item] -> Interacting
-				-> Transition [Store-Grab Item] -> Hold Gun
-				-> Transition [Store-Grab Item] -> Hold Tool
-			- Hold Tool
-				-> Transition [Store Item] -> Interacting
-				-> Transition [Store-Grab Item] -> Hold Gun
-				-> Transition [Store-Grab Item] -> Hold Tool
-	   
+			- Combat
+				-> Hold Equipment
+				-> Swap Equipment
+				-> Use Equipment
 	   - Shooting
 			- Single Shot
 			- Machine Gun
@@ -171,16 +171,34 @@ To Do List:
 			- Grenade Launcher
 			- Piercer/Rail Gun
 			
-	   - Tool - Melee Weapon
-			- The tools are context based items as well as melee weapons.
-				Theyre similar to the Items in Darkest Dungeon, or Element Weapons in Hunt Showdown.
-				The tools will allow players a leg up in specific "Puzzles" and interactions
-			- Players can only have one tool so teamwork and diversification is important.
+			- Gun Projectiles
+				- Vertex Displacement -> Simulate an amorphous blob
+				- Glow outline
+				- Impact Particle System
+				- Blob Trail - Multi-Mesh Particle System
 				
-				- Wrench
-				- Crowbar
-				- Shield?
+		   - Gun Animations
+				- Normal displace -> Gun bulges from the through the cannister when shot.
+				- Ammo Gauge - Real world gauge on the gun that shows the ammo.
+					-> Ammo doesnt reload but rather recharges when not in use. More like cooldown than traditional ammo.
+				- Player Animations: 
+					- Storing
+					- Grabbing
+				- Kick Back when fired
 				
+		   - Tool - Melee Weapon
+				- The tools are context based items as well as melee weapons.
+					Theyre similar to the Items in Darkest Dungeon, Element Weapons in Hunt Showdown, or special pathways in a Metroidvania.
+					The tools will allow players a leg up in specific "Puzzles" and interactions
+				- Players can only have one tool so teamwork and diversification is important.
+					- Wrench
+					- Crowbar
+					- Shield?
+				- The attack with tools is a charge up melee swing
+					- Holding the trigger will charge the attack
+					- Release to unleash a powerful attack
+					- Longer the trigger is held the more damaging the attack
+						- [IDEA] Possibly add a peak point where the attack does extra/special damage
 	   
 	   - Throwables
 			- Grenades
@@ -195,21 +213,6 @@ To Do List:
 			- First Aid Kit
 			- Anti-toxin
 			- The Juice (Speed boost)
-			
-				
-	   - Gun Projectiles
-			- Vertex Displacement -> Simulate an amorphous blob
-			- Glow outline
-			- Impact Particle System
-			- Blob Trail - Multi-Mesh Particle System
-			
-	   - Gun Animations
-			- Normal displace -> Gun bulges from the through the cannister when shot.
-			- Ammo Gauge - Real world gauge on the gun that shows the ammo.
-			- Player Animations: 
-				- Storing
-				- Grabbing
-			- Kick Back when fired
 			
 			
 	[] Enemy Types - Variants

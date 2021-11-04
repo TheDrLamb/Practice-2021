@@ -13,11 +13,11 @@ public class EquipmentAction : MonoBehaviour
 
     public virtual void Down()
     {
-        Debug.Log("Bang!");
+        Debug.Log("Trigger Down");
     }
 
     public virtual void Hold()
     {
-        Debug.Log("BRRRRRRRrrrrr....");
+        Debug.Log("Trigger Held");
     }
 }

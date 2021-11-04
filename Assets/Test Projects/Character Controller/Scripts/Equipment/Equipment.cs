@@ -8,6 +8,11 @@ public class Equipment : MonoBehaviour
     public EquipmentType type;
     public Transform leftHold, rightHold;
     public EquipmentAction action;
+
+    private void Start()
+    {
+        action = GetComponent<EquipmentAction>();
+    }
 }
 
 public enum EquipmentType
