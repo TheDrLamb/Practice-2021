@@ -113,6 +113,8 @@ To Do List:
 					   -> Maintain a hand hold for tools and guns, but constrain the equipment to the other hand
 					   
 			- Animation state
+				-> For swapping use the Async/Await workflow to run the animation, then enable combat when the animation Task is done.
+				-> Ref [https://www.youtube.com/watch?v=WY-mk-ZGAq8]
 			
 			- Animation IK Weight
 				- Left

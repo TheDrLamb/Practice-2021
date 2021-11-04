@@ -494,6 +494,36 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 81515514}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &83438827
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 83438828}
+  m_Layer: 12
+  m_Name: FirePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &83438828
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 83438827}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.531}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1638250404}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &97436452
 GameObject:
   m_ObjectHideFlags: 0
@@ -8417,6 +8447,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1603688076}
+  - {fileID: 83438828}
   m_Father: {fileID: 538905529}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -8450,6 +8481,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89b346e7d68cdd44da528509cfb72d3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rateOfFire: 0.5
+  firePoint: {fileID: 83438828}
+  projectile: {fileID: 7857585888167508797, guid: d7d06e889efca0c44ad0cb5c0bb76579,
+    type: 3}
+  fireSpeed: 1500
 --- !u!1 &1656168166
 GameObject:
   m_ObjectHideFlags: 0

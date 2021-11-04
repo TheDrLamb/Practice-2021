@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Test_Projects.Character_Controller.Scripts.Equipment
@@ -6,30 +7,26 @@ namespace Assets.Test_Projects.Character_Controller.Scripts.Equipment
     public class EquipmentAction_Gun : EquipmentAction
     {
         public float rateOfFire = 1.0f;
-        float roundsPerSecond;
-        float timer = 0.0f;
-
-        private void Start()
-        {
-            roundsPerSecond = 1 / rateOfFire;
-        }
+        public Transform firePoint;
+        public Rigidbody projectile;
+        public float fireSpeed = 3000;
+        Task fireTask;
 
         public override void Down()
         {
-            Fire();
+            fireTask = Fire();
         }
 
         public override void Hold()
         {
-            timer += Time.deltaTime;
-            if (timer >= roundsPerSecond) {
-                Fire();
-            }
+            if(fireTask.IsCompleted) fireTask = Fire();
         }
 
-        private void Fire() {
-            timer = 0.0f;
+        private async Task Fire() {
+            Rigidbody newRigid = Instantiate(projectile,firePoint.position,firePoint.rotation);
+            newRigid.AddForce(fireSpeed * firePoint.forward);
             Debug.Log("Bang!");
+            await Task.Delay((int) (rateOfFire * 1000));
         }
     }
 }

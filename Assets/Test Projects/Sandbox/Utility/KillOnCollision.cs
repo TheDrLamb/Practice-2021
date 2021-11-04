@@ -16,18 +16,30 @@ public class KillOnCollision : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        GameObject newSplat = Instantiate(splat);
-        newSplat.transform.position = this.transform.position;
-        newSplat.transform.rotation = this.transform.rotation;
+        if (splat)
+        {
+            GameObject newSplat = Instantiate(splat);
 
-        Destroy(newSplat, particleSystemsLifetime);
+            newSplat.transform.position = this.transform.position;
+            newSplat.transform.rotation = this.transform.rotation;
 
-        trail.transform.parent = null;
-        Destroy(trail.gameObject, particleSystemsLifetime / 2);
+            Destroy(newSplat, particleSystemsLifetime);
+        }
 
-        foreach (ParticleSystem p in particleSystems) {
-            p.transform.parent = null;
-            Destroy(p.gameObject, particleSystemsLifetime);
+        if (trail) 
+        {
+            trail.transform.parent = null;
+            Destroy(trail.gameObject, particleSystemsLifetime / 2);
+        }
+
+
+        if (particleSystems.Length > 0)
+        {
+            foreach (ParticleSystem p in particleSystems)
+            {
+                p.transform.parent = null;
+                Destroy(p.gameObject, particleSystemsLifetime);
+            }
         }
 
         Destroy(this.gameObject);
