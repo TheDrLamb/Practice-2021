@@ -10,7 +10,7 @@ public class CharacterCombatController : MonoBehaviour
     public Equipment currentEquipment;
 
     CharacterAnimationController animationController;
-    public CharacterStateMachineController StateMachine;
+    CharacterStateMachineController StateMachine;
 
     private void Start()
     {
@@ -21,9 +21,7 @@ public class CharacterCombatController : MonoBehaviour
 
     public void Equip(int id = 0, bool interactDown = false) 
     {
-        //Swap State -> Unequips current Equipment
-        StateMachine.ChangeState((CharacterState)equipmentList[id].type + 2, interactDown);
-
+        Unequip();
         currentEquipment = equipmentList[id];
         currentEquipment.obj.SetActive(true);
         animationController.SetHandTransforms(currentEquipment.leftHold, currentEquipment.rightHold);
@@ -38,16 +36,10 @@ public class CharacterCombatController : MonoBehaviour
     }
 
     public void TriggerDown() {
-        Debug.Log("Bang!");
+        currentEquipment.action.Down();
     }
 
-    public void TriggerHeld(int id) {
-        if (id == 0)
-        {
-            Debug.Log("BRRRRRRRrrrrr....");
-        }
-        else {
-            Debug.Log("Taking Aim!");
-        }
+    public void TriggerHeld() {
+        currentEquipment.action.Hold();
     }
 }

@@ -197,6 +197,7 @@ public class CharacterInteractController : MonoBehaviour
             // Transition to default equipment state
             // *************
             combatController.Equip();
+            stateMachine.ChangeState(CharacterState.Combat, true);
         }
 
         currentInteract = null;

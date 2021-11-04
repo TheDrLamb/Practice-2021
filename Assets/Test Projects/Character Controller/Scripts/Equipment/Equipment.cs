@@ -7,6 +7,7 @@ public class Equipment : MonoBehaviour
     public GameObject obj;
     public EquipmentType type;
     public Transform leftHold, rightHold;
+    public EquipmentAction action;
 }
 
 public enum EquipmentType

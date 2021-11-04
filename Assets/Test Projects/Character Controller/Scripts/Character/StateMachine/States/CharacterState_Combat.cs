@@ -17,6 +17,11 @@ public class CharacterState_Combat : CharacterState_Mobile
         combatController = stateMachine.GetComponent<CharacterCombatController>();
     }
 
+    public override void Enter()
+    {
+        stateMachine.status = CharacterState.Combat;
+    }
+
     protected override void InputUpdate()
     {
         base.InputUpdate();
@@ -59,7 +64,7 @@ public class CharacterState_Combat : CharacterState_Mobile
             }
             else
             {
-                TriggerHeld(0);
+                TriggerHeld();
             }
         }
         else
@@ -76,7 +81,7 @@ public class CharacterState_Combat : CharacterState_Mobile
             }
             else
             {
-                TriggerHeld(1);
+                Trigger2Held();
             }
         }
         else
@@ -107,7 +112,12 @@ public class CharacterState_Combat : CharacterState_Mobile
         combatController.TriggerDown();
     }
 
-    void TriggerHeld(int id) {
-        combatController.TriggerHeld(id);
+    void TriggerHeld() {
+        combatController.TriggerHeld();
+    }
+
+    void Trigger2Held()
+    {
+        //combatController.TriggerHeld();
     }
 }

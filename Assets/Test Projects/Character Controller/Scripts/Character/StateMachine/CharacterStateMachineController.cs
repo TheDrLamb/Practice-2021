@@ -10,10 +10,7 @@ public class CharacterStateMachineController : MonoBehaviour
     CharacterState_ParentInteraction parentInteraction;
 
     //Combat States
-    CharacterState_Gun gunState;
-    CharacterState_Tool toolState;
-    CharacterState_Consumable consumableState;
-    CharacterState_Throwable throwableState;
+    CharacterState_Combat combatState;
 
     public CharacterState status;
 
@@ -21,12 +18,9 @@ public class CharacterStateMachineController : MonoBehaviour
     {
         parentInteraction = new CharacterState_ParentInteraction(this);
         childInteraction = new CharacterState_ChildInteraction(this);
-        gunState = new CharacterState_Gun(this);
-        toolState = new CharacterState_Tool(this);
-        consumableState = new CharacterState_Consumable(this);
-        throwableState = new CharacterState_Throwable(this);
+        combatState = new CharacterState_Combat(this);
 
-        Initialize(gunState);
+        Initialize(combatState);
     }
 
     private void Update()
@@ -62,17 +56,8 @@ public class CharacterStateMachineController : MonoBehaviour
             case CharacterState.ParentInteraction:
                 ChangeState(parentInteraction, interactDown);
                 break;
-            case CharacterState.Gun:
-                ChangeState(gunState, interactDown);
-                break;
-            case CharacterState.Tool:
-                ChangeState(toolState, interactDown);
-                break;
-            case CharacterState.Consumable:
-                ChangeState(consumableState, interactDown);
-                break;
-            case CharacterState.Throwable:
-                ChangeState(throwableState, interactDown);
+            case CharacterState.Combat:
+                ChangeState(combatState, interactDown);
                 break;
         }
     }
@@ -81,8 +66,5 @@ public class CharacterStateMachineController : MonoBehaviour
 public enum CharacterState { 
     ParentInteraction,
     ChildInteraction,
-    Gun,
-    Tool,
-    Consumable,
-    Throwable
+    Combat
 }
