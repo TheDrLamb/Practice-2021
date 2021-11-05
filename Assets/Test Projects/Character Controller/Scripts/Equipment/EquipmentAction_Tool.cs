@@ -5,15 +5,28 @@ namespace Assets.Test_Projects.Character_Controller.Scripts.Equipment
 {
     public class EquipmentAction_Tool : EquipmentAction
     {
-        public override void Down()
+        [Range(0.5f, 5.0f)]
+        public float chargeSpeed = 2;
+        float charge = 0.0f;
+        public CharacterAnimationController animationController;
+
+        private void Start()
         {
-            Debug.Log("Melee Attack");
+            animationController = transform.root.GetComponent<CharacterAnimationController>();
         }
 
         public override void Hold()
         {
-            Debug.Log("Melee Attack: Just Keep Swinging");
-            //Charge up Melee Swing?
+            charge += chargeSpeed * Time.deltaTime;
+            animationController.SetAnimFloat("Melee_Charge", charge);
+        }
+
+        public override void Up()
+        {
+            charge = 0;
+
+            animationController.SetAnimTrigger("Melee_Swing");
+            animationController.SetAnimFloat("Melee_Charge", charge);
         }
     }
 }

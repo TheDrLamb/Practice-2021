@@ -20,4 +20,9 @@ public class EquipmentAction : MonoBehaviour
     {
         Debug.Log("Trigger Held");
     }
+
+    public virtual void Up()
+    {
+        Debug.Log("Trigger Up");
+    }
 }

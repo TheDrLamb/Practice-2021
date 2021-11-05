@@ -69,6 +69,7 @@ public class CharacterState_Combat : CharacterState_Mobile
         }
         else
         {
+            if (trigger1_Down) TriggerUp();
             trigger1_Down = false;
         }
 
@@ -114,6 +115,11 @@ public class CharacterState_Combat : CharacterState_Mobile
 
     void TriggerHeld() {
         combatController.TriggerHeld();
+    }
+
+    void TriggerUp()
+    {
+        combatController.TriggerUp();
     }
 
     void Trigger2Held()

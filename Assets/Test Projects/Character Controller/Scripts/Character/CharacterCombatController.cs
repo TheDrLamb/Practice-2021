@@ -24,7 +24,9 @@ public class CharacterCombatController : MonoBehaviour
         Unequip();
         currentEquipment = equipmentList[id];
         currentEquipment.obj.SetActive(true);
+
         animationController.SetHandTransforms(currentEquipment.leftHold, currentEquipment.rightHold);
+        animationController.SetAnimState((int)currentEquipment.type);
     }
 
     public void Unequip() {
@@ -41,5 +43,9 @@ public class CharacterCombatController : MonoBehaviour
 
     public void TriggerHeld() {
         currentEquipment.action.Hold();
+    }
+
+    public void TriggerUp() {
+        currentEquipment.action.Up();
     }
 }

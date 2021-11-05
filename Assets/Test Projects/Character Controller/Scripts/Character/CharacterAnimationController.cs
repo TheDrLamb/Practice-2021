@@ -5,10 +5,17 @@ using UnityEngine;
 
 public class CharacterAnimationController : MonoBehaviour
 {
+    public Animator anim;
+    public float handSlerpTime = 0.5f;
     public Transform LeftHand, RightHand;
     Transform LeftHold, RightHold;
 
-    public float handSlerpTime = 0.5f;
+    int currentAnimState = 0;
+
+    private void Start()
+    {
+        anim = GetComponent<Animator>();
+    }
 
     void Update()
     {
@@ -94,6 +101,7 @@ public class CharacterAnimationController : MonoBehaviour
         RightHold = _RightHold;
         //StartCoroutine(SlerpHandTransforms());
     }
+
     private IEnumerator SlerpHandTransforms()
     {
         Vector3 leftStart = LeftHand.position;
@@ -111,5 +119,21 @@ public class CharacterAnimationController : MonoBehaviour
         }
         LeftHand.position = leftEnd;
         RightHand.position = rightEnd;
+    }
+
+    public void SetAnimState(int _state)
+    {
+        currentAnimState = _state;
+        anim.SetInteger("Anim_State", currentAnimState);
+    }
+
+    public void SetAnimFloat(string _Property, float _value)
+    {
+        anim.SetFloat(_Property, _value);
+    }
+
+    public void SetAnimTrigger(string _Property)
+    {
+        anim.SetTrigger(_Property);
     }
 }

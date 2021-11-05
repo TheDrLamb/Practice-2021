@@ -25,7 +25,6 @@ namespace Assets.Test_Projects.Character_Controller.Scripts.Equipment
         private async Task Fire() {
             Rigidbody newRigid = Instantiate(projectile,firePoint.position,firePoint.rotation);
             newRigid.AddForce(fireSpeed * firePoint.forward);
-            Debug.Log("Bang!");
             await Task.Delay((int) (rateOfFire * 1000));
         }
     }
